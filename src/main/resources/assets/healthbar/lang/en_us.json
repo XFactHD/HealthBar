@@ -1,0 +1,9 @@
+{
+    "healthbar.configuration.title": "HealthBar Configuration",
+    "healthbar.configuration.display": "Display Mode",
+    "healthbar.configuration.display.tooltip": "Controls how the health value is displayed.\n - ABSOLUTE: displays the current and max health as absolute values\n - PERCENT: displays the current health as a percentage of max health",
+    "healthbar.configuration.threshold": "Threshold",
+    "healthbar.configuration.threshold.tooltip": "Controls the threshold above which the vanilla health display is replaced by a health bar",
+    "healthbar.configuration.hideNumbersInHardcore": "Hide numbers in hardcore",
+    "healthbar.configuration.hideNumbersInHardcore.tooltip": "Controls whether health numbers are hidden in hardcore mode"
+}

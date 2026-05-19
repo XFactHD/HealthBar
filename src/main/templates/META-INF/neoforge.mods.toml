@@ -1,0 +1,25 @@
+license="LGPL v3"
+issueTrackerURL="https://www.github.com/xfacthd/healthbar"
+
+[[mods]]
+    modId="healthbar"
+    version="${mod_version}"
+    displayName="HealthBar"
+    displayURL="https://www.curseforge.com/minecraft/mc-mods/healthbar"
+    logoFile="logo.png"
+    authors="XFactHD"
+    description='''Replaces the vanilla health display with a health bar'''
+
+[[dependencies.healthbar]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.healthbar]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
