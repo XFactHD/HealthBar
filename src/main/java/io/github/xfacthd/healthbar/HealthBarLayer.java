@@ -3,8 +3,8 @@ package io.github.xfacthd.healthbar;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
@@ -44,9 +44,9 @@ public final class HealthBarLayer implements GuiLayer {
     @Override
     public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
-        Gui gui = minecraft.gui;
-        Player player = gui.getCameraPlayer();
-        if (player == null || minecraft.options.hideGui || !Objects.requireNonNull(minecraft.gameMode).canHurtPlayer()) {
+        Hud hud = minecraft.gui.hud;
+        Player player = hud.getCameraPlayer();
+        if (player == null || hud.isHidden() || !Objects.requireNonNull(minecraft.gameMode).canHurtPlayer()) {
             return;
         }
 
@@ -56,12 +56,12 @@ public final class HealthBarLayer implements GuiLayer {
             return;
         }
 
-        Gui.HeartType type = Gui.HeartType.forPlayer(player);
+        Hud.HeartType type = Hud.HeartType.forPlayer(player);
         boolean hardcore = player.level().getLevelData().isHardcore();
         int currHealth = Mth.ceil(player.getHealth());
         int absorption = Mth.ceil(player.getAbsorptionAmount());
         boolean critical = (currHealth + absorption) <= 4F;
-        int tickCount = gui.getGuiTicks();
+        int tickCount = hud.getGuiTicks();
         boolean blink = healthBlinkTime > tickCount && (healthBlinkTime - tickCount) / 3L % 2L == 1L;
         long timeMillis = Util.getMillis();
         if (currHealth < lastHealth && player.invulnerableTime > 0) {
@@ -82,13 +82,13 @@ public final class HealthBarLayer implements GuiLayer {
         float maxHealth = Math.max((float) maxPlayerHealth, (float) Math.max(oldHealth, currHealth));
         float healthPercent = (currHealth / maxHealth);
 
-        gui.random.setSeed(tickCount * 312871L);
+        hud.random.setSeed(tickCount * 312871L);
         int barX = graphics.guiWidth() / 2 - BAR_OFF_X;
         int barInnerX = barX + 1;
-        int barY = graphics.guiHeight() - gui.leftHeight - BAR_HEIGHT_DIFF;
+        int barY = graphics.guiHeight() - hud.leftHeight - BAR_HEIGHT_DIFF;
         int barInnerY = barY + 1;
-        gui.leftHeight += BAR_HEIGHT + 1;
-        gui.rightHeight += BAR_HEIGHT_DIFF / 2;
+        hud.leftHeight += BAR_HEIGHT + 1;
+        hud.rightHeight += BAR_HEIGHT_DIFF / 2;
         int barWidth = (int) (BAR_INNER_WIDTH * healthPercent);
         HeartColorCache.HeartColor heartColor = HeartColorCache.INSTANCE.getHeartColor(type);
 
@@ -102,10 +102,10 @@ public final class HealthBarLayer implements GuiLayer {
         } else if (critical && (tickCount / 3) % 2 == 0) {
             graphics.outline(barX, barY, BAR_WIDTH, BAR_HEIGHT, CommonColors.RED);
         }
-        if (absorption > 0 && type != Gui.HeartType.WITHERED) {
+        if (absorption > 0 && type != Hud.HeartType.WITHERED) {
             // TODO: this isn't a perfect solution, particularly because the absorption attribute has a 2048 limit while health has 1024
             int absorptionWidth = (int) (BAR_INNER_WIDTH * Math.min(absorption / maxHealth, 1F));
-            int color = HeartColorCache.INSTANCE.getHeartColor(Gui.HeartType.ABSORBING).normal();
+            int color = HeartColorCache.INSTANCE.getHeartColor(Hud.HeartType.ABSORBING).normal();
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BAR_TEXTURE, BAR_INNER_WIDTH, BAR_INNER_HEIGHT, 0, 0, barInnerX, barInnerY, absorptionWidth, BAR_INNER_HEIGHT, color);
         }
         if (player.hasEffect(MobEffects.REGENERATION)) {

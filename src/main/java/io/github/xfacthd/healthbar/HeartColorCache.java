@@ -1,7 +1,7 @@
 package io.github.xfacthd.healthbar;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.sprite.AtlasManager;
@@ -20,7 +20,7 @@ public final class HeartColorCache implements PreparableReloadListener {
     public static final HeartColorCache INSTANCE = new HeartColorCache();
     private static final HeartColor WHITE = new HeartColor(0xFFFFFFFF, 0xFFFFFFFF);
 
-    private Map<Gui.HeartType, HeartColor> colors = Map.of();
+    private Map<Hud.HeartType, HeartColor> colors = Map.of();
 
     private HeartColorCache() { }
 
@@ -33,10 +33,10 @@ public final class HeartColorCache implements PreparableReloadListener {
                 .thenAcceptAsync(this::apply);
     }
 
-    private static Map<Gui.HeartType, HeartColor> prepare(SpriteLoader.Preparations guiAtlas) {
-        Map<Gui.HeartType, HeartColor> data = new EnumMap<>(Gui.HeartType.class);
-        for (Gui.HeartType type : Gui.HeartType.values()) {
-            if (type == Gui.HeartType.CONTAINER) {
+    private static Map<Hud.HeartType, HeartColor> prepare(SpriteLoader.Preparations guiAtlas) {
+        Map<Hud.HeartType, HeartColor> data = new EnumMap<>(Hud.HeartType.class);
+        for (Hud.HeartType type : Hud.HeartType.values()) {
+            if (type == Hud.HeartType.CONTAINER) {
                 continue;
             }
 
@@ -47,7 +47,7 @@ public final class HeartColorCache implements PreparableReloadListener {
         return data;
     }
 
-    private static int extractColor(SpriteLoader.Preparations guiAtlas, Gui.HeartType type, boolean blink) {
+    private static int extractColor(SpriteLoader.Preparations guiAtlas, Hud.HeartType type, boolean blink) {
         TextureAtlasSprite sprite = guiAtlas.getSprite(type.getSprite(false, false, blink));
         if (sprite == null) {
             return WHITE.normal;
@@ -71,11 +71,11 @@ public final class HeartColorCache implements PreparableReloadListener {
         return avgColor;
     }
 
-    private void apply(Map<Gui.HeartType, HeartColor> data) {
+    private void apply(Map<Hud.HeartType, HeartColor> data) {
         this.colors = data;
     }
 
-    public HeartColor getHeartColor(Gui.HeartType type) {
+    public HeartColor getHeartColor(Hud.HeartType type) {
         return colors.getOrDefault(type, WHITE);
     }
 
